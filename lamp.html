@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Lamp Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="lamp-off">
+    <div class="scene">
+        <h1 class="main-title">Login Lamp</h1>
+
+        <div class="container">
+            <!-- Lamp Section -->
+            <div class="lamp-section">
+                <div class="lamp-wrapper">
+                    <div class="lamp-head" id="lamp-head">
+                        <!-- Pull Cord Switch -->
+                        <div class="pull-cord" id="cord-trigger"></div>
+
+                        <div class="lamp-shade">
+                            <div class="lamp-face">
+                                <div class="eye"></div>
+                                <div class="eye"></div>
+                            </div>
+                        </div>
+                        <div class="light-beam"></div>
+                    </div>
+                    <div class="lamp-neck"></div>
+                    <div class="lamp-base"></div>
+                </div>
+            </div>
+
+            <!-- Login Section -->
+            <div class="login-section">
+                <div class="login-card">
+                    <h2>Welcome Back</h2>
+                    <form id="login-form">
+                        <div class="input-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" placeholder="Admin@Oray.com" autocomplete="off">
+                        </div>
+                        <div class="input-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="login-btn" id="login-btn">LOGIN</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const body = document.body;
+        const cordTrigger = document.getElementById('cord-trigger');
+        const lampHead = document.getElementById('lamp-head');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('login-btn');
+
+        const themes = ['theme-green', 'theme-red', 'theme-white', 'theme-yellow', 'theme-blue'];
+        let currentThemeIndex = 0;
+
+        // Toggle ON/OFF via Cord
+        cordTrigger.addEventListener('click', () => {
+            // Add pull animation
+            cordTrigger.classList.add('pulling-anim');
+            setTimeout(() => cordTrigger.classList.remove('pulling-anim'), 300);
+
+            const isOn = body.classList.contains('lamp-on');
+
+            if (isOn) {
+                // Turn OFF
+                body.classList.remove('lamp-on');
+                body.classList.add('lamp-off');
+                lampHead.className = 'lamp-head';
+            } else {
+                // Turn ON with next color
+                body.classList.remove('lamp-off');
+                body.classList.add('lamp-on');
+
+                // Clear old themes and apply new one
+                themes.forEach(t => body.classList.remove(t));
+                body.classList.add(themes[currentThemeIndex]);
+
+                // Advance index for next time
+                currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+
+                checkFocus();
+            }
+        });
+
+        // Focus Tracking Logic
+        function checkFocus() {
+            if (!body.classList.contains('lamp-on')) return;
+
+            if (document.activeElement === usernameInput) {
+                lampHead.className = 'lamp-head head-focus-user';
+            } else if (document.activeElement === passwordInput) {
+                lampHead.className = 'lamp-head head-focus-pass';
+            } else if (document.activeElement === loginBtn) {
+                lampHead.className = 'lamp-head head-focus-btn';
+            } else {
+                lampHead.className = 'lamp-head';
+            }
+        }
+
+        [usernameInput, passwordInput, loginBtn].forEach(el => {
+            el.addEventListener('focus', checkFocus);
+            el.addEventListener('blur', () => {
+                // Wait a tiny bit to see if next element is focused
+                setTimeout(checkFocus, 50);
+            });
+        });
+    </script>
+</body>
+
+</html>
